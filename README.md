@@ -735,20 +735,73 @@ After the schema rows, you’ll also see:
 - Align alert check frequency with your dashboard/warehouse refresh schedules.
 
 ## Section 5 – Analytics Applications
-### Statistics and Distributions
-- **Discrete statistics** involve countable values (e.g., number of transactions).
-- **Continuous statistics** involve measurable quantities on a continuum (e.g., temperature, revenue).
-- Understand and apply **descriptive statistics**:
-  - Measures of central tendency: mean, median, mode
-  - Measures of dispersion: variance, standard deviation, range
-- Identify and interpret **key moments** of statistical distributions:
-  - **1st moment (Mean)** – central value
-  - **2nd moment (Variance/Standard Deviation)** – spread of data
-  - **3rd moment (Skewness)** – asymmetry of the distribution
-  - **4th moment (Kurtosis)** – "tailedness" or outlier sensitivity
-- Compare and contrast common **statistical measures**:
-  - Mean vs. median (sensitivity to outliers)
-  - Standard deviation vs. interquartile range
+## Statistics and Distributions
+
+This section covers foundational statistical concepts relevant to Databricks SQL analysis and common exam questions.
+
+---
+
+### Types of Variables
+
+- **Discrete variables**: Represent **countable values**, such as number of transactions or logins. Typically whole numbers.
+- **Continuous variables**: Represent **measurable values** on a continuum, such as temperature, revenue, or time. Can take on infinitely fine values.
+
+---
+
+### Descriptive vs. Inferential Statistics
+
+- **Descriptive statistics**: Focus on **summarizing and describing** a dataset using numerical metrics and visualizations.
+  - Do not attempt to draw conclusions beyond the data.
+  - Example: Calculating the average order value from a dataset.
+
+- **Inferential statistics**: Use sample data to **infer or generalize** about a population.
+  - Includes hypothesis testing, confidence intervals, and regression.
+  - Not heavily tested on the Databricks exam.
+
+#### Rule of Thumb:
+> If it summarizes data without making predictions, it's **descriptive statistics**.
+
+---
+
+### Measures in Descriptive Statistics
+#### Central Tendency:
+- **Mean**: Average value.
+- **Median**: Middle value (less sensitive to outliers).
+- **Mode**: Most frequently occurring value.
+
+#### Dispersion:
+- **Standard deviation**: How much values deviate from the mean.
+- **Variance**: Square of standard deviation.
+- **Range**: Difference between max and min.
+- **Interquartile range (IQR)**: Spread of the middle 50% of the data (Q3 − Q1).
+
+---
+
+### Moments of a Distribution
+
+| Moment       | What It Describes                        | Use Case Example                                   |
+|--------------|-------------------------------------------|----------------------------------------------------|
+| **1st**      | Mean – central location                   | Overall average                                    |
+| **2nd**      | Variance/Standard Deviation – spread      | How tightly values cluster around the mean         |
+| **3rd**      | Skewness – asymmetry                      | Detecting left/right tilt in data distribution     |
+| **4th**      | Kurtosis – tail weight and outlier risk   | High kurtosis = heavy tails, more extreme values   |
+
+#### Kurtosis Explained:
+- **Low kurtosis**: Data have light tails; few outliers.
+- **High kurtosis**: Data have heavy tails; more prone to **extreme values or outliers**.
+- Kurtosis is about the **"tailedness"** of a distribution, not its peak.
+- Kurtosis measures how likely a distribution is to produce outliers — not how tall or flat the peak is. Think: "How fat are the tails?"
+
+---
+
+### Comparing Statistical Measures
+
+| Concept               | Description and Comparison                                      |
+|-----------------------|------------------------------------------------------------------|
+| **Mean vs. Median**    | Mean is affected by outliers; median is more robust.            |
+| **Standard Deviation vs. IQR** | SD uses all values; IQR focuses on the middle 50% (less sensitive to outliers). |
+
+---
 
 ### Data Enhancement
 - **Data enhancement** refers to enriching existing datasets by adding new attributes, calculations, or contextual information.
