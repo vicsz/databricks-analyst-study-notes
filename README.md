@@ -372,20 +372,17 @@ These are condensed study notes for the **Databricks Certified Data Analyst Asso
 - Align alert check frequency with your dashboard/warehouse refresh schedules.
 
 ## Section 5 – Analytics Applications
-
 ### Statistics and Distributions
 - **Discrete statistics** involve countable values (e.g., number of transactions).
 - **Continuous statistics** involve measurable quantities on a continuum (e.g., temperature, revenue).
 - Understand and apply **descriptive statistics**:
   - Measures of central tendency: mean, median, mode
   - Measures of dispersion: variance, standard deviation, range
-
 - Identify and interpret **key moments** of statistical distributions:
   - **1st moment (Mean)** – central value
   - **2nd moment (Variance/Standard Deviation)** – spread of data
   - **3rd moment (Skewness)** – asymmetry of the distribution
   - **4th moment (Kurtosis)** – "tailedness" or outlier sensitivity
-
 - Compare and contrast common **statistical measures**:
   - Mean vs. median (sensitivity to outliers)
   - Standard deviation vs. interquartile range
