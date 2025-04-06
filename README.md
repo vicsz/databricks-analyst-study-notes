@@ -120,7 +120,6 @@ These are condensed study notes for the **Databricks Certified Data Analyst Asso
 
 
 ## Section 1 – Databricks SQL
-
 ### Audience and Usage
 - **Primary audience**: Data analysts who query and visualize data using Databricks SQL.
 - **Side audiences**: Business users, engineers, and data scientists consuming dashboards.
@@ -177,7 +176,6 @@ These are condensed study notes for the **Databricks Certified Data Analyst Asso
   - More complex to design and maintain than batch pipelines.
 
 ## Section 2 – Data Management
-
 ### Delta Lake Overview
 - **Delta Lake** is a storage layer that provides ACID transactions, scalable metadata handling, and unified batch/streaming data processing.
 - Manages **table metadata** (schema, versions, history) automatically.
@@ -394,7 +392,6 @@ These are condensed study notes for the **Databricks Certified Data Analyst Asso
   - Adding demographic features
   - Calculating customer lifetime value
   - Generating derived fields (e.g., revenue per user)
-
 - Identify scenarios where **data enhancement** is beneficial:
   - Improving dashboard insights
   - Supporting more granular segmentation
@@ -413,6 +410,5 @@ These are condensed study notes for the **Databricks Certified Data Analyst Asso
   - Cleaning or reshaping gold-layer data
   - Formatting results for a specific dashboard or report
   - Applying business rules or mappings for final delivery
-
 - Supports the specific analytical needs of a team, stakeholder, or use case.
 
