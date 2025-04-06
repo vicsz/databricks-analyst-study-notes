@@ -481,8 +481,8 @@ After the schema rows, you’ll also see:
 
 ---
 
-
 ## Section 1 – Databricks SQL
+
 ### Audience and Usage
 - **Primary audience**: Data analysts who query and visualize data using Databricks SQL.
 - **Side audiences**: Business users, engineers, and data scientists consuming dashboards.
@@ -511,12 +511,14 @@ After the schema rows, you’ll also see:
 - Typically the **recommended destination** for tools like Fivetran, which use SQL to ingest or visualize data.
 - **Serverless SQL warehouses** offer fast startup, cost efficiency, and are easy to manage.
 - Choose based on **concurrency** and **performance needs**—larger or multi-cluster endpoints support higher workloads but at higher cost.
+- **Auto Stop**: Automatically shuts down the warehouse after inactivity to save costs, but may introduce **startup delay** for scheduled queries.
 
 #### Clusters
 - Used for **notebooks**, **ETL jobs**, **data engineering**, and **interactive Spark workloads**.
 - Support **Python**, **Scala**, **R**, and **SQL** in a more general-purpose environment.
 - While **some integrations (like Fivetran) allow clusters as a destination**, Databricks **recommends SQL warehouses** for most partner workflows due to better support for SQL-based access.
 - Clusters are not typically used directly for powering dashboards or BI tools.
+- **Cluster size** affects performance and concurrency, **not startup speed**. Larger clusters run queries faster but cost more.
 
 ### Data Integration and Ingestion
 - **Partner Connect** simplifies integration with tools like Fivetran, requiring partner-side setup.
