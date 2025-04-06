@@ -119,13 +119,15 @@ These are condensed study notes for the **Databricks Certified Data Analyst Asso
 ---
 
 
-## SQL Language Study Guide (Databricks Focus)
+# Databricks SQL Language Study Guide
+
+This guide summarizes key SQL concepts, syntax, and Databricks-specific extensions that are commonly tested on the **Databricks Certified Data Analyst Associate** exam.
 
 ---
 
-### DDL – Data Definition Language
+## DDL – Data Definition Language
 
-#### Create a Table
+### Create Tables
 ```sql
 CREATE TABLE sales (
   id INT,
@@ -133,8 +135,9 @@ CREATE TABLE sales (
   amount DOUBLE
 );
 ```
+- Creates a managed table stored by Databricks.
+- To create an external (unmanaged) table, use the `LOCATION` clause.
 
-#### Create with Location (Unmanaged)
 ```sql
 CREATE TABLE external_sales (
   id INT,
@@ -145,56 +148,48 @@ USING DELTA
 LOCATION '/mnt/data/external_sales/';
 ```
 
-#### Drop Table
+### Drop and Rename Tables
 ```sql
 DROP TABLE IF EXISTS sales;
-```
-
-#### Rename Table
-```sql
 ALTER TABLE sales RENAME TO sales_2024;
 ```
 
 ---
 
-### DML – Data Manipulation Language
+## DML – Data Manipulation Language
 
-#### Insert Data
+### Insert, Update, Delete
 ```sql
-INSERT INTO sales VALUES (1, 'East', 100.0), (2, 'West', 250.0);
-```
+INSERT INTO sales VALUES (1, 'East', 100.0);
 
-#### Update Data
-```sql
 UPDATE sales SET amount = amount * 1.1 WHERE region = 'East';
-```
 
-#### Delete Data
-```sql
 DELETE FROM sales WHERE region = 'West';
 ```
 
 ---
 
-### Views and Temp Views
+## Views and Temporary Views
 
-#### Permanent View
+### Permanent Views
+Stored in the metastore and accessible across sessions.
 ```sql
-CREATE OR REPLACE VIEW regional_sales AS
-SELECT region, SUM(amount) as total_sales
-FROM sales
-GROUP BY region;
+CREATE OR REPLACE VIEW top_regions AS
+SELECT region, SUM(amount) AS total FROM sales GROUP BY region;
 ```
 
-#### Temporary View
+### Temporary Views
+Session-scoped. Ideal for intermediate results or testing.
 ```sql
-CREATE OR REPLACE TEMP VIEW temp_summary AS
-SELECT COUNT(*) as row_count FROM sales;
+CREATE OR REPLACE TEMP VIEW temp_sales AS
+SELECT * FROM sales WHERE amount > 100;
 ```
 
 ---
 
-### Temporary Tables
+## Temporary Tables (via Views)
+
+Databricks supports temp views instead of temp tables. Use temp views to simulate session-local temporary tables:
 ```sql
 CREATE OR REPLACE TEMP VIEW temp_table AS
 SELECT * FROM sales WHERE amount > 100;
@@ -202,53 +197,158 @@ SELECT * FROM sales WHERE amount > 100;
 
 ---
 
-### Join Types
+## Subqueries and CTEs
+
+### Subqueries
+Used to filter or derive values inside another query.
+```sql
+SELECT * FROM sales
+WHERE region IN (SELECT region FROM blacklist);
+```
+
+### Common Table Expressions (CTEs)
+Named, reusable subqueries defined with `WITH`. Good for readability and modular SQL logic.
+```sql
+WITH high_sales AS (
+  SELECT region, SUM(amount) AS total
+  FROM sales
+  GROUP BY region
+  HAVING total > 1000
+)
+SELECT * FROM high_sales;
+```
+
+---
+
+## Joins (Standard and Extended)
 
 | Join Type        | Description                                                  |
 |------------------|--------------------------------------------------------------|
-| INNER JOIN       | Only matching rows from both tables                          |
-| LEFT OUTER JOIN  | All rows from left + matches from right                      |
-| RIGHT OUTER JOIN | All rows from right + matches from left                      |
-| FULL OUTER JOIN  | All rows when match found in left or right                   |
-| CROSS JOIN       | Cartesian product (all combinations)                         |
-| LEFT ANTI JOIN   | Rows from left not matching any row in right                 |
-| LEFT SEMI JOIN   | Rows from left where a match exists in right                 |
+| INNER JOIN       | Matches rows in both tables                                  |
+| LEFT OUTER JOIN  | All rows from left + matched rows from right                |
+| RIGHT OUTER JOIN | All rows from right + matched rows from left                |
+| FULL OUTER JOIN  | All rows from both sides                                     |
+| CROSS JOIN       | All possible combinations                                    |
+| LEFT SEMI JOIN   | Keeps left-side rows with matches in right (like a filter)   |
+| LEFT ANTI JOIN   | Keeps left-side rows **without** matches in right            |
 
-#### LEFT ANTI JOIN Example
+### ANTI JOIN Example
 ```sql
 SELECT * FROM sales
 LEFT ANTI JOIN blacklist ON sales.region = blacklist.region;
 ```
+Returns only sales rows where region is NOT in the blacklist.
 
 ---
 
-### Subqueries and CTEs
+## Window Functions
 
-#### Subquery in WHERE clause
+Enable ranking, row-wise calculations, and running totals within partitions of data.
+
 ```sql
-SELECT * FROM sales
-WHERE region IN (SELECT DISTINCT region FROM blacklist);
+SELECT id, region, amount,
+       RANK() OVER (PARTITION BY region ORDER BY amount DESC) AS rank
+FROM sales;
 ```
 
-#### CTE
-```sql
-WITH top_regions AS (
-  SELECT region, SUM(amount) as total
-  FROM sales
-  GROUP BY region
-  HAVING total > 500
-)
-SELECT * FROM top_regions;
-```
+Common window functions:
+- `ROW_NUMBER()`
+- `RANK()`, `DENSE_RANK()`
+- `LAG()`, `LEAD()`
+- `SUM() OVER (...)`
 
 ---
 
-### Delta Lake Enhancements
 
-#### MERGE INTO (Upserts)
+## CUBE and ROLLUP
+
+### Input Table: `sales`
+
+| region | product | amount |
+|--------|---------|--------|
+| East   | A       | 100    |
+| East   | B       | 200    |
+| West   | A       | 150    |
+| West   | B       | 150    |
+
+---
+
+### ROLLUP
+
+The `ROLLUP` operator creates subtotals that **roll up** from the most granular level to a grand total, following the column order.
+
 ```sql
-MERGE INTO sales AS target
-USING updates AS source
+SELECT region, product, SUM(amount) AS total_sales
+FROM sales
+GROUP BY ROLLUP(region, product);
+```
+
+#### Explanation:
+- Subtotals are calculated in a **hierarchical** manner.
+- Aggregation moves from `(region, product)` → `(region)` → `()` (grand total).
+
+#### ROLLUP Output
+
+| region | product | total_sales |
+|--------|---------|-------------|
+| East   | A       | 100         |
+| East   | B       | 200         |
+| East   | NULL    | 300         |
+| West   | A       | 150         |
+| West   | B       | 150         |
+| West   | NULL    | 300         |
+| NULL   | NULL    | 600         |
+
+---
+
+### CUBE
+
+The `CUBE` operator generates **all combinations** of the specified grouping columns, including subtotals across each dimension and the grand total.
+
+```sql
+SELECT region, product, SUM(amount) AS total_sales
+FROM sales
+GROUP BY CUBE(region, product);
+```
+
+#### Explanation:
+- Returns subtotals for:
+  - `(region, product)`
+  - `(region)`
+  - `(product)`
+  - `()` (grand total)
+- Useful for multi-dimensional analysis and pivot-style reporting.
+
+#### CUBE Output
+
+| region | product | total_sales |
+|--------|---------|-------------|
+| East   | A       | 100         |
+| East   | B       | 200         |
+| East   | NULL    | 300         |
+| West   | A       | 150         |
+| West   | B       | 150         |
+| West   | NULL    | 300         |
+| NULL   | A       | 250         |
+| NULL   | B       | 350         |
+| NULL   | NULL    | 600         |
+
+---
+
+### Summary
+
+- Use `ROLLUP` when you want **nested subtotals** in a hierarchy (e.g., region → total).
+- Use `CUBE` when you want **all group-level totals** for cross-tab or pivot analysis.
+
+
+---
+
+## Delta Lake Features
+
+### MERGE INTO (Upserts)
+Performs update or insert based on match condition.
+```sql
+MERGE INTO target USING source
 ON target.id = source.id
 WHEN MATCHED THEN
   UPDATE SET amount = source.amount
@@ -256,51 +356,43 @@ WHEN NOT MATCHED THEN
   INSERT (id, region, amount) VALUES (source.id, source.region, source.amount);
 ```
 
-#### OPTIMIZE
+### OPTIMIZE
+Combines many small files into larger ones to improve query performance.
 ```sql
 OPTIMIZE sales;
 ```
 
-#### ZORDER
+### ZORDER
+Sorts data to accelerate queries that filter on specific columns.
 ```sql
 OPTIMIZE sales ZORDER BY (region);
 ```
 
 ---
 
-### Window Functions
+## Higher-Order and Array Functions
+
+Databricks supports advanced functional programming-like syntax.
+
+### EXPLODE (unnest arrays into rows)
 ```sql
-SELECT id, region, amount,
-       RANK() OVER (PARTITION BY region ORDER BY amount DESC) AS rank
-FROM sales;
+SELECT id, explode(items) AS item
+FROM orders;
 ```
+
+### TRANSFORM (map over array)
+```sql
+SELECT transform(array(1, 2, 3), x -> x + 1);
+-- Result: [2, 3, 4]
+```
+
+Other useful functions:
+- `FILTER`, `AGGREGATE`, `EXISTS`
+- `ARRAY_CONTAINS`, `SIZE`, `MAP_KEYS`
 
 ---
 
-### CUBE and ROLLUP
-
-```sql
--- ROLLUP: hierarchical subtotal
-SELECT region, product, SUM(amount)
-FROM sales
-GROUP BY ROLLUP (region, product);
-
--- CUBE: all combinations
-SELECT region, product, SUM(amount)
-FROM sales
-GROUP BY CUBE (region, product);
-```
-
-### Sample Output for ROLLUP
-| region | product | SUM(amount) |
-|--------|---------|-------------|
-| East   | A       | 100         |
-| East   | B       | 150         |
-| East   | NULL    | 250         |
-| West   | A       | 200         |
-| West   | NULL    | 200         |
-| NULL   | NULL    | 450         |
-
+Let me know if you'd like this exported as Markdown or PDF.
 
 ## Section 1 – Databricks SQL
 ### Audience and Usage
