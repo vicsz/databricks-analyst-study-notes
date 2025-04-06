@@ -1,5 +1,14 @@
-# databricks-analyst-study-notes
-Databricks Data Analyst Associate Study Notes
+# Databricks Certified Data Analyst Associate – Study Notes
+
+These are condensed study notes for the **Databricks Certified Data Analyst Associate** exam, based on the official [exam guide (Mar 1, 2025 version)](https://www.databricks.com/learn/certification/databricks-certified-data-analyst-associate).
+
+## Exam Overview
+- **Format**: 45 multiple-choice questions
+- **Duration**: 90 minutes
+- **Delivery**: Online proctored exam
+- **Prerequisites**: None officially required, but 6+ months hands-on Databricks experience is recommended
+- **Scope**: Focuses on using Databricks SQL to perform data analysis, build dashboards, manage Lakehouse data, and integrate with BI tools
+
 
 ## Section 1 – Databricks SQL
 
