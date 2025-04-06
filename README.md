@@ -119,6 +119,189 @@ These are condensed study notes for the **Databricks Certified Data Analyst Asso
 ---
 
 
+## SQL Language Study Guide (Databricks Focus)
+
+---
+
+### DDL – Data Definition Language
+
+#### Create a Table
+```sql
+CREATE TABLE sales (
+  id INT,
+  region STRING,
+  amount DOUBLE
+);
+```
+
+#### Create with Location (Unmanaged)
+```sql
+CREATE TABLE external_sales (
+  id INT,
+  region STRING,
+  amount DOUBLE
+)
+USING DELTA
+LOCATION '/mnt/data/external_sales/';
+```
+
+#### Drop Table
+```sql
+DROP TABLE IF EXISTS sales;
+```
+
+#### Rename Table
+```sql
+ALTER TABLE sales RENAME TO sales_2024;
+```
+
+---
+
+### DML – Data Manipulation Language
+
+#### Insert Data
+```sql
+INSERT INTO sales VALUES (1, 'East', 100.0), (2, 'West', 250.0);
+```
+
+#### Update Data
+```sql
+UPDATE sales SET amount = amount * 1.1 WHERE region = 'East';
+```
+
+#### Delete Data
+```sql
+DELETE FROM sales WHERE region = 'West';
+```
+
+---
+
+### Views and Temp Views
+
+#### Permanent View
+```sql
+CREATE OR REPLACE VIEW regional_sales AS
+SELECT region, SUM(amount) as total_sales
+FROM sales
+GROUP BY region;
+```
+
+#### Temporary View
+```sql
+CREATE OR REPLACE TEMP VIEW temp_summary AS
+SELECT COUNT(*) as row_count FROM sales;
+```
+
+---
+
+### Temporary Tables
+```sql
+CREATE OR REPLACE TEMP VIEW temp_table AS
+SELECT * FROM sales WHERE amount > 100;
+```
+
+---
+
+### Join Types
+
+| Join Type        | Description                                                  |
+|------------------|--------------------------------------------------------------|
+| INNER JOIN       | Only matching rows from both tables                          |
+| LEFT OUTER JOIN  | All rows from left + matches from right                      |
+| RIGHT OUTER JOIN | All rows from right + matches from left                      |
+| FULL OUTER JOIN  | All rows when match found in left or right                   |
+| CROSS JOIN       | Cartesian product (all combinations)                         |
+| LEFT ANTI JOIN   | Rows from left not matching any row in right                 |
+| LEFT SEMI JOIN   | Rows from left where a match exists in right                 |
+
+#### LEFT ANTI JOIN Example
+```sql
+SELECT * FROM sales
+LEFT ANTI JOIN blacklist ON sales.region = blacklist.region;
+```
+
+---
+
+### Subqueries and CTEs
+
+#### Subquery in WHERE clause
+```sql
+SELECT * FROM sales
+WHERE region IN (SELECT DISTINCT region FROM blacklist);
+```
+
+#### CTE
+```sql
+WITH top_regions AS (
+  SELECT region, SUM(amount) as total
+  FROM sales
+  GROUP BY region
+  HAVING total > 500
+)
+SELECT * FROM top_regions;
+```
+
+---
+
+### Delta Lake Enhancements
+
+#### MERGE INTO (Upserts)
+```sql
+MERGE INTO sales AS target
+USING updates AS source
+ON target.id = source.id
+WHEN MATCHED THEN
+  UPDATE SET amount = source.amount
+WHEN NOT MATCHED THEN
+  INSERT (id, region, amount) VALUES (source.id, source.region, source.amount);
+```
+
+#### OPTIMIZE
+```sql
+OPTIMIZE sales;
+```
+
+#### ZORDER
+```sql
+OPTIMIZE sales ZORDER BY (region);
+```
+
+---
+
+### Window Functions
+```sql
+SELECT id, region, amount,
+       RANK() OVER (PARTITION BY region ORDER BY amount DESC) AS rank
+FROM sales;
+```
+
+---
+
+### CUBE and ROLLUP
+
+```sql
+-- ROLLUP: hierarchical subtotal
+SELECT region, product, SUM(amount)
+FROM sales
+GROUP BY ROLLUP (region, product);
+
+-- CUBE: all combinations
+SELECT region, product, SUM(amount)
+FROM sales
+GROUP BY CUBE (region, product);
+```
+
+### Sample Output for ROLLUP
+| region | product | SUM(amount) |
+|--------|---------|-------------|
+| East   | A       | 100         |
+| East   | B       | 150         |
+| East   | NULL    | 250         |
+| West   | A       | 200         |
+| West   | NULL    | 200         |
+| NULL   | NULL    | 450         |
+
+
 ## Section 1 – Databricks SQL
 ### Audience and Usage
 - **Primary audience**: Data analysts who query and visualize data using Databricks SQL.
