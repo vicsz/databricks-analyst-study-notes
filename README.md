@@ -2,12 +2,124 @@
 
 These are condensed study notes for the **Databricks Certified Data Analyst Associate** exam, based on the official [exam guide (Mar 1, 2025 version)](https://www.databricks.com/learn/certification/databricks-certified-data-analyst-associate).
 
-## Exam Overview
-- **Format**: 45 multiple-choice questions
-- **Duration**: 90 minutes
-- **Delivery**: Online proctored exam
-- **Prerequisites**: None officially required, but 6+ months hands-on Databricks experience is recommended
-- **Scope**: Focuses on using Databricks SQL to perform data analysis, build dashboards, manage Lakehouse data, and integrate with BI tools
+## Study Notes: Exam Insights
+
+### Overall Difficulty and Format
+- The exam is **entry-level**, targeting data analysts comfortable with SQL and basic analytics tasks.
+- Considered **easier than Data Engineer Associate** and **more practical than theory-heavy**.
+- **45 multiple-choice questions** in **90 minutes** — generous time allowance.
+- Candidates with solid SQL knowledge and light Databricks familiarity often pass with **minimal prep**.
+
+---
+
+## Key Topics to Understand (with Details)
+
+### Databricks SQL Interface & Dashboarding
+- The **SQL Editor** allows users to write, run, and save SQL queries. Features:
+  - **Schema browser** shows available databases and tables.
+  - **Query results** can be turned into visualizations (bar charts, pivot tables, etc.).
+  - Queries can be **scheduled** to refresh regularly or trigger **alerts**.
+
+- **Dashboards**:
+  - Combine multiple visualizations.
+  - Support **parameter widgets** (e.g., dropdowns) to allow user-driven filtering.
+  - Can be **shared** with stakeholders and set to auto-refresh.
+
+### SQL and Advanced Querying in Databricks
+
+#### Window Functions
+- Allow you to perform **row-wise calculations across partitions** of data (like moving averages or rankings).
+- Example:
+  ```sql
+  SELECT name, region, revenue,
+         RANK() OVER (PARTITION BY region ORDER BY revenue DESC) AS rank
+  FROM sales;
+  ```
+- Common window functions: `RANK()`, `DENSE_RANK()`, `ROW_NUMBER()`, `LAG()`, `LEAD()`, `SUM() OVER(...)`
+
+#### Aggregations
+- Know how to use `GROUP BY` with functions like `COUNT()`, `AVG()`, `MIN()`, `MAX()`, `SUM()`.
+- Understand differences between **scalar aggregation** and **group-level aggregation**.
+
+#### Subqueries
+- Queries nested inside `SELECT`, `FROM`, or `WHERE`.
+- Useful for filtering or isolating logic in complex queries.
+
+#### Higher-Order Functions (Spark SQL Extensions)
+- Useful when working with arrays, maps, or nested fields.
+- Examples: `transform`, `filter`, `exists`, `aggregate`
+  ```sql
+  SELECT transform(array(1, 2, 3), x -> x + 1);
+  -- returns [2, 3, 4]
+  ```
+
+---
+
+### Delta Lake & Table Management
+
+#### Table Types
+- **Managed Tables**: Databricks stores both metadata and data; dropped table = data deletion.
+- **Unmanaged Tables**: External data location; only metadata is deleted if table is dropped.
+
+#### Delta Lake Features
+- Delta Lake is Databricks' transaction layer on top of Parquet:
+  - **ACID Transactions**: Ensures consistency.
+  - **Time Travel**: Query older versions using `VERSION AS OF` or `TIMESTAMP AS OF`.
+  - **Schema Enforcement**: Ensures data types match expectations.
+  - **Schema Evolution**: Controlled changes to schema (with permissions).
+  
+- Know key operations:
+  - `OPTIMIZE` – Compacts small files into larger ones to improve read performance.
+  - `ZORDER BY` – Reorders data to improve performance on selective queries (similar to indexing).
+  - `MERGE INTO` – Performs upserts (insert/update) into a Delta table based on conditions.
+
+---
+
+### Visualization and Interactive Analytics
+
+- Visualization types supported:
+  - **Table**, **Counter**, **Pivot**, **Bar/Line charts**
+- Visualizations are tied to **query results**, and can be reused across dashboards.
+- You can **format** visuals for readability (e.g., number precision, axis scaling).
+- **Query parameters** can drive dynamic filters, but only **dropdowns** are supported in alerts.
+
+---
+
+### Alerts and Scheduling
+
+- **Alerts** trigger when a query returns a value that meets a specified condition.
+  - Example: Trigger an email if sales fall below $10,000.
+- Must be based on **single-value numeric queries** (e.g., `SELECT COUNT(*)`).
+- Only **dropdown parameters** are supported — **date pickers do not work** with alerts.
+- Alerts can **notify via email or webhook** and are configured from the UI.
+
+- **Query Scheduling**:
+  - Queries or dashboards can be set to auto-refresh at intervals.
+  - Important: Ensure the warehouse used doesn't shut down before the refresh triggers (align auto-stop and schedule).
+
+---
+
+### Partner Connect and BI Integration
+
+- **Partner Connect** enables quick, UI-based connections to:
+  - **BI tools**: Tableau, Power BI, Looker
+  - **Ingestion tools**: Fivetran, Rivery, dbt
+- Reduces setup time and removes the need for manual config.
+- Also supports small file uploads (CSV) and external database connections (via federation).
+
+---
+
+### Security and Governance (Basic Analyst-Level)
+
+- Analysts can manage:
+  - **Sharing queries/dashboards**
+  - **Transferring ownership** of artifacts (e.g., if a colleague leaves).
+- Databricks supports **fine-grained access control**:
+  - **Viewers** can refresh dashboards (if using owner’s credentials).
+  - **Editors** can update or modify queries and visuals.
+- Know the difference between **table/view/query access vs. dashboard-level sharing**.
+
+---
 
 
 ## Section 1 – Databricks SQL
