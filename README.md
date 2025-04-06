@@ -119,3 +119,185 @@ Databricks Data Analyst Associate Study Notes
   - Access control rules for sensitive data.
   - Audit and compliance requirements tied to PII usage.
 
+## Section 3 – SQL in the Lakehouse
+
+### Querying Fundamentals
+- Identify queries that retrieve data using `SELECT` with specific `WHERE` conditions.
+- Understand and interpret the **output of a SELECT query** based on its columns and clauses.
+
+### Data Insertion and Merging
+- Know when to use:
+  - `MERGE INTO`: For upserts (insert/update based on match conditions).
+  - `INSERT INTO`: To append new rows into a table.
+  - `COPY INTO`: For loading external files (e.g., CSV, JSON, Parquet) into Delta tables.
+
+### Query Simplification
+- Use **subqueries** (nested SELECTs) to simplify complex queries and improve modularity.
+
+### Joins
+- Compare and contrast different types of joins:
+  - `INNER JOIN`: Only matching records from both sides.
+  - `LEFT OUTER JOIN`: All records from the left, and matched ones from the right.
+  - `RIGHT OUTER JOIN`: All records from the right, and matched ones from the left.
+  - `FULL OUTER JOIN`: All records when there is a match in either left or right.
+  - `CROSS JOIN`: Cartesian product of both tables (all combinations).
+
+### Aggregations
+- Use aggregate functions like `SUM()`, `AVG()`, `COUNT()`, `MIN()`, `MAX()` to produce summary metrics.
+- Group results using `GROUP BY` to structure the output.
+
+### Nested Data
+- Handle **nested data formats** (like structs or arrays) using dot notation and functions like `explode()`.
+
+### Cube and Roll-Up
+- Use `ROLLUP` to aggregate hierarchically from the most detailed to the grand total.
+- Use `CUBE` to compute all combinations of groupings.
+- Know the difference:
+  - **ROLLUP** is hierarchical and includes subtotals.
+  - **CUBE** includes all possible subtotal combinations.
+
+### Window Functions
+- Use **windowing** (analytic) functions to calculate metrics across time or partitions:
+  - Examples: `ROW_NUMBER()`, `RANK()`, `LAG()`, `LEAD()`, `SUM() OVER (...)`.
+
+### ANSI SQL Benefits
+- Having **ANSI SQL support** ensures consistency, portability, and familiarity.
+- Reduces the learning curve and enables analysts to apply standard SQL practices.
+
+### Silver-Level Data
+- **Silver data** is cleaned and joined, ready for consumption or further enrichment.
+- Know how to **identify**, **access**, and **clean** silver-layer data for analysis.
+
+### Query Optimization
+- Use **query history** to review and improve past queries.
+- **Caching** frequently used datasets or results helps reduce query latency and development time.
+
+### Spark SQL Performance Tuning
+- Use **higher-order functions** (e.g., `transform`, `filter`, `aggregate`) for more efficient operations on arrays and maps.
+- Optimize queries for performance using these functional programming-like constructs.
+
+### User-Defined Functions (UDFs)
+- Create and apply **UDFs** when built-in SQL functions are insufficient.
+- UDFs allow for reusable custom logic in common or complex transformations.
+- Understand appropriate scenarios for UDFs, especially when scaling across large datasets.
+
+## Section 4 – Data Visualization and Dashboarding
+
+### Creating Visualizations
+- Build **basic visualizations** directly from query results in Databricks SQL.
+- Visualizations are **schema-specific** (based on query output structure).
+- Supported visualization types include:
+  - **Table**
+  - **Details**
+  - **Counter**
+  - **Pivot table**
+
+### Formatting and Storytelling
+- Visualization formatting significantly impacts **how insights are perceived**.
+- Enhance clarity and impact through:
+  - Proper labeling
+  - Axis scaling
+  - Color usage
+  - Consistent formatting
+- Use formatting techniques to **add visual appeal** and guide interpretation.
+- Customize visualizations to support **data storytelling**, emphasizing key trends or comparisons.
+
+### Dashboard Composition
+- Build dashboards by combining **multiple existing visualizations** from saved Databricks SQL queries.
+- Adjust **color schemes across visualizations** for a consistent appearance.
+- Use **query parameters** to allow dynamic updates to dashboard content based on user input.
+
+### Dashboard Parameters
+- Understand how **parameters** affect the underlying query output:
+  - Example: A dropdown that filters data by region or date.
+- Use **"Query-Based Dropdown List"** to populate a parameter from the distinct results of another query.
+- This enables dynamic, user-driven filtering across visualizations.
+
+### Dashboard Sharing and Refreshing
+- Share dashboards in multiple ways:
+  - With edit or view access
+  - Public or private links (workspace dependent)
+- Evaluate **pros and cons** of each sharing method:
+  - Public links are easy to distribute but reduce control.
+  - Private dashboards maintain control but require user access setup.
+
+### Credential Behavior
+- Dashboards can be **refreshed using the owner's credentials**, allowing access for users without direct permissions to all underlying objects.
+- This supports safe and controlled dashboard sharing.
+
+### Refresh Scheduling
+- Configure **automatic refresh intervals** to keep dashboards updated.
+- Be aware of potential issues:
+  - If a dashboard’s refresh rate is **shorter than the warehouse's Auto Stop setting**, the warehouse may shut down before a refresh occurs.
+  - Consider aligning refresh schedules with warehouse lifecycle settings.
+
+### Alerts
+- Alerts monitor the **result of a query** and trigger **notifications** when a specified condition is met.
+- Use cases include monitoring thresholds, anomalies, or status flags (e.g., "value exceeds 100", "row count is zero").
+- Alerts are configured by:
+  - Selecting a saved query
+  - Defining a condition (e.g., `value > X`)
+  - Choosing a target column and row (if applicable)
+  - Specifying one or more notification channels (email, webhook, Slack, etc.)
+
+#### Key Limitations
+- **Alerts only work on queries that return a single numeric value** (e.g., row count, sum, or a calculated metric).
+- Alerts **do not work with queries that return multiple rows or complex result sets**.
+- Alerts are **not compatible with date-type query parameters**.
+- Alerts **only support dropdown-based query parameters**—these can be static lists or populated from a query.
+  - For example, you can filter by region or category using a dropdown, but you cannot pass in a date picker.
+
+#### Best Practices
+- Use alerts on queries specifically designed to return a single value for evaluation.
+- Avoid complex aggregations or queries with joins unless they simplify to a single numeric result.
+- Use parameterized queries with dropdowns for dynamic alerting across categories (e.g., per region or per status).
+- Align alert check frequency with your dashboard/warehouse refresh schedules.
+
+## Section 5 – Analytics Applications
+
+### Statistics and Distributions
+- **Discrete statistics** involve countable values (e.g., number of transactions).
+- **Continuous statistics** involve measurable quantities on a continuum (e.g., temperature, revenue).
+- Understand and apply **descriptive statistics**:
+  - Measures of central tendency: mean, median, mode
+  - Measures of dispersion: variance, standard deviation, range
+
+- Identify and interpret **key moments** of statistical distributions:
+  - **1st moment (Mean)** – central value
+  - **2nd moment (Variance/Standard Deviation)** – spread of data
+  - **3rd moment (Skewness)** – asymmetry of the distribution
+  - **4th moment (Kurtosis)** – "tailedness" or outlier sensitivity
+
+- Compare and contrast common **statistical measures**:
+  - Mean vs. median (sensitivity to outliers)
+  - Standard deviation vs. interquartile range
+
+### Data Enhancement
+- **Data enhancement** refers to enriching existing datasets by adding new attributes, calculations, or contextual information.
+- This is a common step in analytics workflows to improve model accuracy or business relevance.
+- Examples include:
+  - Adding demographic features
+  - Calculating customer lifetime value
+  - Generating derived fields (e.g., revenue per user)
+
+- Identify scenarios where **data enhancement** is beneficial:
+  - Improving dashboard insights
+  - Supporting more granular segmentation
+  - Enabling better forecasting or prediction
+
+### Data Blending
+- **Data blending** involves combining data from **two or more source applications**.
+- Typically used when joining internal and external datasets that are not in the same system.
+- Scenarios where blending is useful:
+  - Merging CRM data with support ticket logs
+  - Joining product data from an ERP with marketing campaign performance
+
+### Last-Mile ETL
+- **Last-mile ETL** refers to project-specific transformations performed near the end of a data pipeline.
+- Often involves:
+  - Cleaning or reshaping gold-layer data
+  - Formatting results for a specific dashboard or report
+  - Applying business rules or mappings for final delivery
+
+- Supports the specific analytical needs of a team, stakeholder, or use case.
+
