@@ -349,9 +349,8 @@ GROUP region, product WITH CUBE;
 
 ### Summary
 
-- Use `ROLLUP` when you want **nested subtotals** in a hierarchy (e.g., region → total).
-- Use `CUBE` when you want **all group-level totals** for cross-tab or pivot analysis.
-
+- Use ROLLUP when you want hierarchical subtotals, moving from detailed to summary levels (e.g., region → total). Returns fewer rows with only valid rollup paths.
+- Use CUBE when you want all possible subtotals across every grouping combination (like a pivot table). Returns more rows including all subtotal combinations.
 
 ---
 
