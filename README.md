@@ -736,9 +736,6 @@ After the schema rows, you’ll also see:
 
 ## Section 5 – Analytics Applications
 ## Statistics and Distributions
-
-This section covers foundational statistical concepts relevant to Databricks SQL analysis and common exam questions.
-
 ---
 
 ### Types of Variables
