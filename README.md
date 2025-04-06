@@ -76,7 +76,6 @@ These are condensed study notes for the **Databricks Certified Data Analyst Asso
 ---
 
 ### Visualization and Interactive Analytics
-
 - Visualization types supported:
   - **Table**, **Counter**, **Pivot**, **Bar/Line charts**
 - Visualizations are tied to **query results**, and can be reused across dashboards.
@@ -86,13 +85,11 @@ These are condensed study notes for the **Databricks Certified Data Analyst Asso
 ---
 
 ### Alerts and Scheduling
-
 - **Alerts** trigger when a query returns a value that meets a specified condition.
   - Example: Trigger an email if sales fall below $10,000.
 - Must be based on **single-value numeric queries** (e.g., `SELECT COUNT(*)`).
 - Only **dropdown parameters** are supported — **date pickers do not work** with alerts.
 - Alerts can **notify via email or webhook** and are configured from the UI.
-
 - **Query Scheduling**:
   - Queries or dashboards can be set to auto-refresh at intervals.
   - Important: Ensure the warehouse used doesn't shut down before the refresh triggers (align auto-stop and schedule).
