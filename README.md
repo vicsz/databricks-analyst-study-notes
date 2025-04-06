@@ -14,16 +14,50 @@ These are condensed study notes for the **Databricks Certified Data Analyst Asso
 
 ## Key Topics to Understand (with Details)
 
-### Databricks SQL Interface & Dashboarding
-- The **SQL Editor** allows users to write, run, and save SQL queries. Features:
-  - **Schema browser** shows available databases and tables.
-  - **Query results** can be turned into visualizations (bar charts, pivot tables, etc.).
-  - Queries can be **scheduled** to refresh regularly or trigger **alerts**.
+## Databricks SQL Interface & Dashboarding
 
-- **Dashboards**:
-  - Combine multiple visualizations.
-  - Support **parameter widgets** (e.g., dropdowns) to allow user-driven filtering.
-  - Can be **shared** with stakeholders and set to auto-refresh.
+### SQL Editor
+- The **SQL Editor** allows users to write, run, and save SQL queries.
+- Features include:
+  - **Schema browser** to explore available tables and columns.
+  - **Query results** can be visualized (e.g., bar charts, line charts, pivot tables).
+  - Queries can be **scheduled** to run at regular intervals or to **trigger alerts**.
+
+### Dashboards
+- Dashboards are built by **adding visualizations** based on one or more queries.
+- A **single query** can have **multiple visualizations**, and all can be added to the same dashboard.
+- Visualizations can include filters or **parameters** to allow **interactive control** for dashboard users.
+
+### Parameters and Dashboard Interactivity
+- You can assign **query parameters** to a **Dashboard Parameter**.
+- This links that parameter across multiple visualizations so they **stay in sync** when the user changes the value on the dashboard.
+- This is useful for filtering all visuals (e.g., by region or product) using a single dropdown control.
+
+### Sharing Dashboards Securely
+- Dashboards can be shared **without granting access to the underlying data or workspace** using:
+  - **PDF export**
+  - **PNG export of visualizations**
+  - **Screenshots**
+  - **Email subscriptions** (via refresh schedule with recipients added)
+- **Do not** share **Personal Access Tokens (PATs)**. These provide full authenticated access and violate security requirements.
+
+### Visualization Types
+
+| Visualization       | What It Is                                             | When to Use                                                                                   |
+|---------------------|--------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+| **Bar Chart**        | Vertical bars comparing values                        | Compare values across categories (e.g., sales by region, product types)                       |
+| **IBar Chart**       | Inline-style bar chart                                | Use in compact dashboards with limited space                                                  |
+| **Line Chart**       | Line connecting data points                           | Show trends over time (e.g., revenue over months)                                             |
+| **Area Chart**       | Line chart with filled area                           | Emphasize total volume or magnitude over time                                                 |
+| **Pie Chart**        | Circle divided into segments                          | Show part-to-whole relationships with few categories (ideally less than 5)                    |
+| **Histogram**        | Distribution chart                                    | Show frequency distribution of a numeric variable (e.g., age, purchase size)                  |
+| **Scatter Plot**     | Plot of two numeric axes                              | Show relationships or correlations between two numeric variables                              |
+| **Heatmap**          | Grid of values with color shading                     | Display intensity across two categorical dimensions (e.g., hour of day vs. day of week)       |
+| **Pivot Table**      | Table with groupings and aggregation                  | Summarize and drill into data by multiple dimensions                                          |
+| **Counter**          | Large number representing a metric                    | Display a single key metric (e.g., daily active users)                                        |
+| **Sankey**           | Flow diagram with weighted connections                | Visualize paths or flows (e.g., user journey through a website)                               |
+| **Word Cloud**       | Words sized by frequency                              | Show frequency of terms (e.g., top search queries)                                            |
+| **Choropleth Map**   | Map with shaded regions                               | Show geographic distribution (e.g., sales by country or state)                                |
 
 ### SQL and Advanced Querying in Databricks
 
@@ -120,8 +154,6 @@ These are condensed study notes for the **Databricks Certified Data Analyst Asso
 
 
 # Databricks SQL Language Study Guide
-
-This guide summarizes key SQL concepts, syntax, and Databricks-specific extensions that are commonly tested on the **Databricks Certified Data Analyst Associate** exam.
 
 ---
 
@@ -401,25 +433,53 @@ Other useful functions:
 - `FILTER`, `AGGREGATE`, `EXISTS`
 - `ARRAY_CONTAINS`, `SIZE`, `MAP_KEYS`
 
+## Inspecting Table Metadata
+
+### DESCRIBE and DESCRIBE EXTENDED
+
+Use `DESCRIBE` to view a table or view’s column structure (name, type, and comment).
+
+```sql
+DESCRIBE sales;
+```
+
+Use `DESCRIBE EXTENDED` to retrieve both schema information **and** detailed metadata such as:
+- Table location
+- Provider (e.g., Delta)
+- Table type (Managed/External)
+- Storage details
+
+```sql
+DESCRIBE EXTENDED sales;
+```
+
+### Sample Output (DESCRIBE)
+
+| col_name | data_type | comment |
+|----------|-----------|---------|
+| id       | int       |         |
+| region   | string    |         |
+| amount   | double    |         |
+
+### Sample Output (DESCRIBE EXTENDED excerpt)
+
+After the schema rows, you’ll also see:
+
+| col_name                   | data_type                                            | comment |
+|---------------------------|------------------------------------------------------|---------|
+| # Detailed Table Information |                                                      |         |
+| Location                  | dbfs:/user/hive/warehouse/sales                      |         |
+| Provider                  | delta                                                |         |
+| Table Type                | MANAGED                                              |         |
+| ...                       | ...                                                  |         |
+
+### Rule of Thumb
+
+- Use `DESCRIBE` to check **schema** quickly.
+- Use `DESCRIBE EXTENDED` when you need to confirm **storage details**, **table type**, or **format** (especially for Delta tables).
+
+
 ---
-
-## Visualizations 
-
-| Visualization       | When to Use                                                                                   |
-|---------------------|-----------------------------------------------------------------------------------------------|
-| **Bar Chart**        | Compare values across categories (e.g., sales by region, product types).                      |
-| **IBar Chart**       | Compact bar chart for use in **inline dashboards** or narrow layouts.                         |
-| **Line Chart**       | Show **trends over time** using continuous x-axis (e.g., revenue over months).                |
-| **Area Chart**       | Similar to line chart, but emphasizes **volume or magnitude** over time.                      |
-| **Pie Chart**        | Show **part-to-whole** proportions. Best with **few categories** (ideally <5).                |
-| **Histogram**        | Visualize the **distribution** of a single numeric variable (e.g., ages, transaction size).   |
-| **Scatter Plot**     | Display **relationships or correlations** between two numeric variables.                      |
-| **Heatmap**          | Show values in a 2D grid across two categories (e.g., usage by day and hour).                 |
-| **Pivot Table**      | Summarize and explore data across multiple dimensions; supports drill-down.                   |
-| **Counter**          | Highlight a **single KPI or metric** (e.g., total users today).                               |
-| **Sankey**           | Visualize **flow** between stages or categories (e.g., page-to-page user navigation).         |
-| **Word Cloud**       | Show frequency of words or terms (e.g., most searched items). Larger font = higher frequency. |
-| **Choropleth Map**   | Visualize **geographic distribution** by shading map regions (e.g., revenue by state).        |
 
 
 ## Section 1 – Databricks SQL
