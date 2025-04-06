@@ -403,7 +403,24 @@ Other useful functions:
 
 ---
 
-Let me know if you'd like this exported as Markdown or PDF.
+## Visualizations 
+
+| Visualization       | When to Use                                                                                   |
+|---------------------|-----------------------------------------------------------------------------------------------|
+| **Bar Chart**        | Compare values across categories (e.g., sales by region, product types).                      |
+| **IBar Chart**       | Compact bar chart for use in **inline dashboards** or narrow layouts.                         |
+| **Line Chart**       | Show **trends over time** using continuous x-axis (e.g., revenue over months).                |
+| **Area Chart**       | Similar to line chart, but emphasizes **volume or magnitude** over time.                      |
+| **Pie Chart**        | Show **part-to-whole** proportions. Best with **few categories** (ideally <5).                |
+| **Histogram**        | Visualize the **distribution** of a single numeric variable (e.g., ages, transaction size).   |
+| **Scatter Plot**     | Display **relationships or correlations** between two numeric variables.                      |
+| **Heatmap**          | Show values in a 2D grid across two categories (e.g., usage by day and hour).                 |
+| **Pivot Table**      | Summarize and explore data across multiple dimensions; supports drill-down.                   |
+| **Counter**          | Highlight a **single KPI or metric** (e.g., total users today).                               |
+| **Sankey**           | Visualize **flow** between stages or categories (e.g., page-to-page user navigation).         |
+| **Word Cloud**       | Show frequency of words or terms (e.g., most searched items). Larger font = higher frequency. |
+| **Choropleth Map**   | Visualize **geographic distribution** by shading map regions (e.g., revenue by state).        |
+
 
 ## Section 1 – Databricks SQL
 ### Audience and Usage
@@ -429,15 +446,17 @@ Let me know if you'd like this exported as Markdown or PDF.
 ### SQL Endpoints / Warehouses vs. Clusters
 
 #### SQL Endpoints (Warehouses)
-- Purpose-built for **BI tools**, dashboards, and SQL queries.
-- Support **partner integrations** like Fivetran, Tableau, Power BI, and Looker.
-- **Serverless endpoints** are ideal for fast, low-maintenance access.
-- Choose based on **concurrency and SLA needs**—larger endpoints cost more but handle more load.
+- Purpose-built for **SQL queries**, **dashboards**, and **BI tool integrations**.
+- Support **Partner Connect integrations** with tools like **Fivetran**, **Tableau**, **Power BI**, and **Looker**.
+- Typically the **recommended destination** for tools like Fivetran, which use SQL to ingest or visualize data.
+- **Serverless SQL warehouses** offer fast startup, cost efficiency, and are easy to manage.
+- Choose based on **concurrency** and **performance needs**—larger or multi-cluster endpoints support higher workloads but at higher cost.
 
 #### Clusters
-- Used for **notebooks**, **data engineering**, **ETL**, and **interactive Spark jobs**.
-- Provide full flexibility, including support for non-SQL workloads (e.g., Python, Scala).
-- Not used directly for dashboards or SQL endpoints.
+- Used for **notebooks**, **ETL jobs**, **data engineering**, and **interactive Spark workloads**.
+- Support **Python**, **Scala**, **R**, and **SQL** in a more general-purpose environment.
+- While **some integrations (like Fivetran) allow clusters as a destination**, Databricks **recommends SQL warehouses** for most partner workflows due to better support for SQL-based access.
+- Clusters are not typically used directly for powering dashboards or BI tools.
 
 ### Data Integration and Ingestion
 - **Partner Connect** simplifies integration with tools like Fivetran, requiring partner-side setup.
