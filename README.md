@@ -282,6 +282,12 @@ SELECT region, product, SUM(amount) AS total_sales
 FROM sales
 GROUP BY ROLLUP(region, product);
 ```
+or
+```sql
+SELECT region, product, SUM(amount) AS total_sales
+FROM sales
+GROUP BY region, product WITH ROLLUP;
+```
 
 #### Explanation:
 - Subtotals are calculated in a **hierarchical** manner.
@@ -309,6 +315,12 @@ The `CUBE` operator generates **all combinations** of the specified grouping col
 SELECT region, product, SUM(amount) AS total_sales
 FROM sales
 GROUP BY CUBE(region, product);
+```
+or
+```sql
+SELECT region, product, SUM(amount) AS total_sales
+FROM sales
+GROUP region, product WITH CUBE;
 ```
 
 #### Explanation:
